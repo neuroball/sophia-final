@@ -3,19 +3,42 @@ import java.util.Scanner;
 class walottery {
     int noOfGames;
     String inputType;
+    char inputTypeChar;
 
     public void getUserData() {
         System.out.println("WA LOTTERY SIMULATOR");
         System.out.println("How many games would you like to play?");
-        System.out.println("Use (Q)uick Pick? Or enter games (m)anually? [qQmM]");
+        System.out.println("Use (Q)uick Pick? Or enter games (m)anually? [qm]");
         Scanner scanner = new Scanner(System.in);
-        this.noOfGames = scanner.nextInt();
-        this.inputType = scanner.nextLine();
-
+        try {
+            this.noOfGames = scanner.nextInt();
+            scanner.nextLine(); 
+        } catch (Exception e) {
+            System.out.println("Invalid input for number of games. Please enter a valid integer.");
+            return;
+        }
+        
+        try {
+// Consume the newline left-over
+            this.inputType = scanner.nextLine();
+            if (this.inputType.length() == 0) {
+                throw new Exception("Input type cannot be empty.");
+            }
+            if (this.inputType.length() > 1) {
+                throw new Exception("Input type must be a single character.");
+            }
+            if (!this.inputType.equalsIgnoreCase("q") && !this.inputType.equalsIgnoreCase("m")) {
+                throw new Exception("Invalid input for game type.");
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage() + " Please enter 'q' for Quick Pick or 'm' for Manual entry.");
+            return;
+        }
     }
 
 
     public void createGames() {
+
     }
 
 }
