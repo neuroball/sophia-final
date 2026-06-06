@@ -2,10 +2,15 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Random;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 class walottery {
     int noOfGames;
     String inputType;
     int[][] gameNumbersArr;
+    int gameBound = 6;
+    int lotteryBound = 49;
 
     public void getUserData() {
         System.out.println("WA LOTTERY SIMULATOR");
@@ -40,20 +45,55 @@ class walottery {
     public void fillGamesWithQuickPick() {
         Random rand = new Random();
 
-        for (int currentGame = 0; currentGame < 6; currentGame++) {
+        for (int currentGame = 0; currentGame < gameBound; currentGame++) {
             Set<Integer> gameNumbersSet = new HashSet<Integer>();
             while (true) {
-                int n = rand.nextInt(49);
+                int n = rand.nextInt(lotteryBound);
                 if (n > 0) {
                     gameNumbersSet.add(n);
                 }
-                if (gameNumbersSet.size() == 6) {
+                if (gameNumbersSet.size() == gameBound) {
                     break;
                 }
             }
             gameNumbersArr[currentGame] = gameNumbersSet.stream()
-                                                        .mapToInt(Integer::intValue)
-                                                        .toArray();
+                .mapToInt(Integer::intValue)
+                .toArray();
+        }
+    }
+
+    public void fillGamesWithManualInput() {
+        System.out.println("");
+        
+        Scanner scanner = new Scanner(System.in);
+        for (int currentGame = 0; currentGame < gameBound; currentGame++) {
+            try {
+                System.out.println("");
+                System.out.println(String.format("Please enter your six comma separated lotto game numbers (1-49) for game %d.%n", currentGame + 1));
+
+                String gameNumbers = scanner.nextLine();
+                String gameNumbersTrimmed = gameNumbers.replaceAll("\\s+", "");
+
+                boolean validContent = gameNumbersTrimmed.matches("[0-9],]+");
+                if (!validContent) {
+                    throw new Exception("The input only can contain numbers [0-9] and commas.");
+                }
+
+                Set<Integer> gameNumbersSet = Arrays.stream(gameNumbersTrimmed.split(","))
+                    .map(Integer::parseInt)
+                    .collect(Collectors.toSet());
+                
+                if (gameNumbersSet.size() != 6) {
+                    throw new Exception("The input needs to be six non repeating numbers for each game.");
+                }
+
+                gameNumbersArr[currentGame] = gameNumbersSet.stream()
+                    .mapToInt(Integer::intValue)
+                    .toArray();
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                return;
+            }
         }
     }
 
@@ -68,24 +108,15 @@ class walottery {
     }
 
 }
-//
-// If variable 'inputType' contains 'q' in lower case, start loop to create array with six unique random numbers between 1 and 49.
-//   For each game 'currentGame' from 1-'noOfGames'
-//     Create variable 'gameNumbersSet' as an empty Set.
-//     Loop
-//       Create variable 'rand' and create a random number from 1-49.
-//       Check if 'gameNumbersSet' contains 'rand'.
-//         If not, add it to 'gameNumbersSet'.
-//       Exit loop if 'gameNumbersSet' length is 6.
-//     Convert 'gameNumbersSet' to an array and assign it to the current game.
-//     Increment 'currentGame by 1
 
-// If the variable 'inputType' contains 'm' in lower case, start a loop for each game.  For each game from 1-'noOfGames'    Read list of comma separated game numbers from user input and store it in 'gameNumbers' variable.
+
+// If the variable 'inputType' contains 'm' in lower case, start a loop for each game.  For each game from 1-'noOfGames'
+//     Read list of comma separated game numbers from user input and store it in 'gameNumbers' variable.
 //     Clean input by removing spaces from 'gameNumbers' variable.
-//     Clean input by removing commas and store it in the 'verifyInput' variable.
-//     Check that the 'verifyInput' variable only contains numbers between 0-9 and nothing else.
+//     Clean input by removing commas and store it in the 'gameNumbersTrimmed' variable.
+//     Check that the 'gameNumbersTrimmed' variable only contains numbers between 0-9 and nothing else.
 //       If something else is found, throw an error and display the error message to only use numbers when entering games.
-//     Break up the 'gameNumbers' variable by splitting it by commas into an array named 'gameNumbersArr'..
+//     Break up the 'gameNumbersTrimmed' variable by splitting it by commas into an array named 'gameNumbersArr'..
 //     Verify length of 'gameNumbersArr' to be of length equaling 6.
 //       If the length is not 6, throw an error and display an error message to the user saying that each game has exactly 6 numbers.
 //     Assign 'gameNumbersArr' to the current game.
