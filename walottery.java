@@ -1,9 +1,11 @@
 import java.util.Scanner;
-
+import java.util.Set;
+import java.util.HashSet;
+import java.util.Random;
 class walottery {
     int noOfGames;
     String inputType;
-    char inputTypeChar;
+    int[][] gameNumbersArr;
 
     public void getUserData() {
         System.out.println("WA LOTTERY SIMULATOR");
@@ -19,7 +21,6 @@ class walottery {
         }
         
         try {
-// Consume the newline left-over
             this.inputType = scanner.nextLine();
             if (this.inputType.length() == 0) {
                 throw new Exception("Input type cannot be empty.");
@@ -35,17 +36,39 @@ class walottery {
             return;
         }
     }
+    
+    public void fillGamesWithQuickPick() {
+        Random rand = new Random();
 
+        for (int currentGame = 0; currentGame < 6; currentGame++) {
+            Set<Integer> gameNumbersSet = new HashSet<Integer>();
+            while (true) {
+                int n = rand.nextInt(49);
+                if (n > 0) {
+                    gameNumbersSet.add(n);
+                }
+                if (gameNumbersSet.size() == 6) {
+                    break;
+                }
+            }
+            gameNumbersArr[currentGame] = gameNumbersSet.stream()
+                                                        .mapToInt(Integer::intValue)
+                                                        .toArray();
+        }
+    }
 
     public void createGames() {
+        this.gameNumbersArr = new int[this.noOfGames][6];
 
+        if (this.inputType.equalsIgnoreCase("q")) {
+            fillGamesWithQuickPick();
+        } else if (this.inputType.equalsIgnoreCase("m")) {
+            fillGamesWithManualInput();
+        }   
     }
 
 }
-// Write out program name "WA LOTTERY SIMULATOR"
-// Write out the question "How many games would you like to play?"Wait for and then store user input in the 'noOfGames' variable.
-// Write out the question "Use (Q)uick Pick? Or enter games (m)anually? [qQmM]"
-// Wait for and then store user input in the 'inputType' variable.
+//
 // If variable 'inputType' contains 'q' in lower case, start loop to create array with six unique random numbers between 1 and 49.
 //   For each game 'currentGame' from 1-'noOfGames'
 //     Create variable 'gameNumbersSet' as an empty Set.
